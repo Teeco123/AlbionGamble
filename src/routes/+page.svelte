@@ -5,25 +5,26 @@
 <body>
 	<header>
 		<img class="logo" src="" alt="LOGO" />
-		<div class="user">
-			<form action="?" method="post">
-				{#if !data.user}
-					<button formaction="?/loginRedirect">
-						<img src="images/login.png" alt="login" />
-						<p>Login / Register</p>
-					</button>
-				{:else}
-					<button formaction="?/logout">
-						<img src="images/logout.png" alt="logout" />
-						<p>Logout</p>
-					</button>
-					<button formaction="?/myProfile">
-						<img src="images/myprofile.png" alt="my profile" />
-						<p>My Profile</p>
-					</button>
-				{/if}
-			</form>
-		</div>
+		<form action="?" method="post" class="user">
+			{#if !data.user}
+				<button formaction="?/loginRedirect">
+					<img src="images/login.png" alt="login" />
+					<p>Login / Register</p>
+				</button>
+			{:else}
+				<div class="balance">
+					<img src="images/balance.png" alt="balance" />
+					<p>{data.user.balance}</p>
+				</div>
+
+				<button formaction="?/myProfile">
+					<img src="images/myprofile.png" alt="my profile" />
+				</button>
+				<button formaction="?/logout">
+					<img src="images/logout.png" alt="logout" />
+				</button>
+			{/if}
+		</form>
 	</header>
 	dada
 </body>
@@ -31,13 +32,35 @@
 <style lang="scss">
 	body {
 		margin: 0;
-		background-color: black;
+		background-color: rgb(0, 0, 0);
 		color: white;
 		header {
 			display: flex;
 			height: 10%;
-			background-color: blanchedalmond;
+			background-color: rgb(50, 50, 50);
 			justify-content: space-around;
+			form {
+				display: flex;
+				align-items: center;
+				button {
+					margin: 0 20px 0 20px;
+					background-color: Transparent;
+					border: none;
+					cursor: pointer;
+					img {
+						width: 64px;
+					}
+				}
+				.balance {
+					margin: 0 20px 0 20px;
+					display: flex;
+					color: gold;
+					img {
+						width: 64px;
+						margin-right: 20px;
+					}
+				}
+			}
 		}
 	}
 </style>

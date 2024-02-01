@@ -15,7 +15,8 @@ export const handle = async ({ event, resolve }) => {
 	if (user) {
 		event.locals.user = {
 			id: session,
-			login: user.login
+			login: user.login,
+			balance: user.balance
 		};
 	}
 	return await resolve(event);

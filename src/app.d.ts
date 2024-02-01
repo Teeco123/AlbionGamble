@@ -7,6 +7,7 @@ declare global {
 			user: {
 				id: string;
 				login: string;
+				balance: Number;
 			};
 		}
 		// interface PageData {}
