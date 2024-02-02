@@ -5,6 +5,15 @@
 	let slice: any;
 
 	let numberOfSlices = 3;
+	let player = [20,30,10];
+	let totalSilver = player[0]+player[1]+player[2];
+	
+	for(let x=0; x<numberOfSlices;x++)
+	{
+		player[x]= player[x] / totalSilver; //procent szans :)
+	}
+
+	console.log(player);
 
 	const canvas = {
 		width: 800,
@@ -19,7 +28,9 @@
 		ctx.moveTo(400, 400);
 	};
 
-	const drawSlice = (sliceCtx: any) => {};
+	const drawSlice = (sliceCtx: any) => {
+		
+	};
 
 	onMount(() => {
 		console.log('Onmount');
