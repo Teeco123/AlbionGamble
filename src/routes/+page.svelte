@@ -34,7 +34,7 @@
 <style lang="scss">
 	body {
 		margin: 0;
-		background-color: rgb(0, 0, 0);
+		background-color: rgb(148, 148, 148);
 		color: white;
 		header {
 			display: flex;
