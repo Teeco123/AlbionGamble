@@ -31,10 +31,11 @@
 </script>
 
 <div class="WheelOfFortune">
-	<canvas bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
-	{#each { length: numberOfSlices } as _, i}
-		<canvas bind:this={slice} />
-	{/each}
+	<canvas bind:this={wheelCanvas} width={canvas.width} height={canvas.height}>
+		{#each { length: numberOfSlices } as _, i}
+			<canvas bind:this={slice} />
+		{/each}
+	</canvas>
 </div>
 
 <style lang="scss">
