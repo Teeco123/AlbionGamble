@@ -3,16 +3,19 @@
 
 	let wheelCanvas: any;
 	let slice: any;
+	
+	let x=0;
+	let numberOfSlices = 5;
+	let player = [70, 40, 35, 15,20];
+	let totalSilver = 0;
+	for(x=0;x<numberOfSlices;x++){
+		totalSilver += player[x];
+	};
+	const kolory =["red","blue","green"] //kolory kawałów
 
-	let numberOfSlices = 3;
-	let player = [20, 30, 10];
-	let totalSilver = player[0] + player[1] + player[2];
-
-	for (let x = 0; x < numberOfSlices; x++) {
+	for (x = 0; x < numberOfSlices; x++) {
 		player[x] = player[x] / totalSilver; //procent szans :)
 	}
-
-	console.log(player);
 
 	const canvas = {
 		width: 800,
@@ -23,15 +26,20 @@
 		ctx.beginPath();
 		ctx.arc(400, 400, 300, 0, 2 * Math.PI);
 		ctx.stroke();
-
 		ctx.moveTo(400, 400);
 	};
 
+	x=0; //zmienna do kawałów
+	let ileKulkaPelne = 0; //zmienna do kawałów
 	const drawSlice = (sliceCtx: any) => {
+		for(x; x<numberOfSlices;x++){
 		sliceCtx.beginPath();
-		sliceCtx.moveTo(400, 400);
-		sliceCtx.lineTo(200, 200);
+		sliceCtx.arc(400, 400, 300, ileKulkaPelne, ileKulkaPelne += player[x] * Math.PI * 2); //nadanie lie kula pelne wartości zalełnionego koła
+		sliceCtx.lineTo(400, 400);
+		sliceCtx.fillStyle = kolory[x%3]
+		sliceCtx.fill();
 		sliceCtx.stroke();
+		}
 	};
 
 	onMount(() => {
@@ -45,9 +53,7 @@
 
 <div class="WheelOfFortune">
 	<canvas bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
-	{#each { length: numberOfSlices } as _, i}
 		<canvas bind:this={slice} width={canvas.width} height={canvas.height} />
-	{/each}
 </div>
 
 <style lang="scss">
