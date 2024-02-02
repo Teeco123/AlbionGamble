@@ -1,4 +1,6 @@
 <script lang="ts">
+	import WheelOfFortune from './WheelOfFortune.svelte';
+
 	export let data;
 </script>
 
@@ -26,7 +28,7 @@
 			{/if}
 		</form>
 	</header>
-	dada
+	<WheelOfFortune />
 </body>
 
 <style lang="scss">
@@ -36,7 +38,7 @@
 		color: white;
 		header {
 			display: flex;
-			height: 10%;
+			height: 9vh;
 			background-color: rgb(50, 50, 50);
 			justify-content: space-around;
 			form {
@@ -48,15 +50,15 @@
 					border: none;
 					cursor: pointer;
 					img {
-						width: 64px;
+						width: 50px;
 					}
 				}
 				.balance {
-					margin: 0 20px 0 20px;
+					margin: 0 30px 0 20px;
 					display: flex;
-					color: gold;
+					color: silver;
 					img {
-						width: 64px;
+						width: 50px;
 						margin-right: 20px;
 					}
 				}
