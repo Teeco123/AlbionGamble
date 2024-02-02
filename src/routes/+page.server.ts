@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { ObjectId } from 'mongodb';
-import { db } from '$lib/server/db.js';
+import { client, db } from '$lib/server/db.js';
 
 export const actions = {
 	loginRedirect: async () => {
@@ -21,9 +21,22 @@ export const actions = {
 		throw redirect(303, `/profile/${user?.login}`);
 	}
 };
-
-export async function load({ locals }) {
+export const load = async ({ locals }) => {
 	return {
 		user: locals.user
 	};
+};
+
+async function WatchDb() {
+	try {
+		const changeStream = db.collection('Users').watch();
+
+		for await (const change of changeStream) {
+			console.log(change);
+		}
+		await changeStream.close();
+	} finally {
+		await client.close();
+	}
 }
+WatchDb().catch(console.dir);
