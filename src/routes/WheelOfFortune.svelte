@@ -16,7 +16,7 @@
 		ctx.arc(400, 400, 300, 0, 2 * Math.PI);
 		ctx.stroke();
 
-		ctx.moveTo(200, 200);
+		ctx.moveTo(400, 400);
 	};
 
 	const drawSlice = (sliceCtx: any) => {};
