@@ -5,12 +5,11 @@
 	let slice: any;
 
 	let numberOfSlices = 3;
-	let player = [20,30,10];
-	let totalSilver = player[0]+player[1]+player[2];
-	
-	for(let x=0; x<numberOfSlices;x++)
-	{
-		player[x]= player[x] / totalSilver; //procent szans :)
+	let player = [20, 30, 10];
+	let totalSilver = player[0] + player[1] + player[2];
+
+	for (let x = 0; x < numberOfSlices; x++) {
+		player[x] = player[x] / totalSilver; //procent szans :)
 	}
 
 	console.log(player);
@@ -29,7 +28,10 @@
 	};
 
 	const drawSlice = (sliceCtx: any) => {
-		
+		sliceCtx.beginPath();
+		sliceCtx.moveTo(400, 400);
+		sliceCtx.lineTo(200, 200);
+		sliceCtx.stroke();
 	};
 
 	onMount(() => {
@@ -42,17 +44,24 @@
 </script>
 
 <div class="WheelOfFortune">
-	<canvas bind:this={wheelCanvas} width={canvas.width} height={canvas.height}>
-		{#each { length: numberOfSlices } as _, i}
-			<canvas bind:this={slice} />
-		{/each}
-	</canvas>
+	<canvas bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
+	{#each { length: numberOfSlices } as _, i}
+		<canvas bind:this={slice} width={canvas.width} height={canvas.height} />
+	{/each}
 </div>
 
 <style lang="scss">
 	.WheelOfFortune {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		canvas {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+
+			transform: translate(-50%, 0%);
+		}
 	}
 </style>
