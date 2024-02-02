@@ -1,14 +1,17 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 
-	let wheelCanvas;
+	let wheelCanvas: any;
+	let slice: any;
+
+	let numberOfSlices = 3;
 
 	const canvas = {
 		width: 800,
 		height: 800
 	};
 
-	const drawWheel = (ctx) => {
+	const drawWheel = (ctx: any) => {
 		ctx.beginPath();
 		ctx.arc(400, 400, 300, 0, 2 * Math.PI);
 		ctx.stroke();
@@ -16,15 +19,22 @@
 		ctx.moveTo(200, 200);
 	};
 
+	const drawSlice = (sliceCtx: any) => {};
+
 	onMount(() => {
 		console.log('Onmount');
 		const ctx = wheelCanvas.getContext('2d');
+		const sliceCtx = slice.getContext('2d');
 		drawWheel(ctx);
+		drawSlice(sliceCtx);
 	});
 </script>
 
 <div class="WheelOfFortune">
 	<canvas bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
+	{#each { length: numberOfSlices } as _, i}
+		<canvas bind:this={slice} />
+	{/each}
 </div>
 
 <style lang="scss">
