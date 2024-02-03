@@ -23,7 +23,7 @@ export const actions = {
 		});
 
 		if (userData) {
-			// @ts-ignore
+			//@ts-ignore
 			cookies.set('session', userId, {
 				path: '/',
 				httpOnly: true,
