@@ -1,5 +1,5 @@
-import { db } from '$lib/server/db';
-import { ObjectId } from 'mongodb';
+import { addDoc, collection, query, where, getDocs, documentId } from 'firebase/firestore';
+import { firestore } from '$lib/firebase';
 
 export const handle = async ({ event, resolve }) => {
 	const session = event.cookies.get('session');
@@ -8,15 +8,20 @@ export const handle = async ({ event, resolve }) => {
 		return await resolve(event);
 	}
 
-	var o_id = new ObjectId(session);
+	let userData;
+	let userQuery = query(collection(firestore, 'users'), where(documentId(), '==', session));
+	const userSnapshot = await getDocs(userQuery);
+	userSnapshot.forEach((userDoc) => {
+		userData = userDoc.data();
+	});
 
-	const user = await db.collection('Users').findOne({ _id: o_id });
-
-	if (user) {
+	if (userData) {
 		event.locals.user = {
 			id: session,
-			login: user.login,
-			balance: user.balance
+			//@ts-ignore
+			login: userData.login,
+			//@ts-ignore
+			balance: userData.balance
 		};
 	}
 	return await resolve(event);
