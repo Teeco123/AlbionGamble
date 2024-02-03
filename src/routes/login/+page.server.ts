@@ -1,4 +1,5 @@
-import { db } from '$lib/server/db.js';
+import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { firestore } from '$lib/server/firebase';
 import { redirect } from '@sveltejs/kit';
 
 export const actions = {
@@ -7,14 +8,23 @@ export const actions = {
 		const login = data.get('login');
 		const password = data.get('password');
 
-		let user = await db
-			.collection('Users')
-			.findOne({ login: { $eq: login }, password: { $eq: password } });
+		let userData;
+		let userId;
+		let userQuery = query(
+			collection(firestore, 'users'),
+			where('login', '==', login),
+			where('password', '==', password)
+		);
+		const userSnapshot = await getDocs(userQuery);
+		userSnapshot.forEach((userDoc) => {
+			// doc.data() is never undefined for query doc snapshots
+			userData = userDoc.data();
+			userId = userDoc.id;
+		});
 
-		const userid = String(user?._id);
-
-		if (user) {
-			cookies.set('session', userid, {
+		if (userData) {
+			// @ts-ignore
+			cookies.set('session', userId, {
 				path: '/',
 				httpOnly: true,
 				secure: true,
@@ -26,7 +36,7 @@ export const actions = {
 			return { loginRequired: true };
 		} else if (!password) {
 			return { passwordRequired: true };
-		} else if (!user) {
+		} else if (!userData) {
 			return { dontMatch: true };
 		}
 	},
@@ -36,16 +46,28 @@ export const actions = {
 		const login = data.get('login');
 		const password = data.get('password');
 
-		let user = await db.collection('Users').findOne({ login: login });
+		let userData;
+		let userQuery = query(collection(firestore, 'users'), where('login', '==', login));
+		const userSnapshot = await getDocs(userQuery);
+		userSnapshot.forEach((userDoc) => {
+			// doc.data() is never undefined for query doc snapshots
+			userData = userDoc.data();
+		});
 
-		if (!user && password && login) {
-			db.collection('Users').insertOne({ login: login, password: password, balance: 0 });
+		console.log(userData);
+
+		if (!userData && password && login) {
+			addDoc(collection(firestore, 'users'), {
+				login: login,
+				password: password,
+				balance: 0
+			});
 			return { success: true };
 		} else if (!login) {
 			return { loginRequired: true };
 		} else if (!password) {
 			return { passwordRequired: true };
-		} else if (user) {
+		} else if (userData) {
 			return { userExists: true };
 		}
 	}
