@@ -1,7 +1,9 @@
 <script lang="ts">
 	import WheelOfFortune from './WheelOfFortune.svelte';
-
+	import { docStore } from 'sveltefire';
+	import { firestore } from '$lib/firebase';
 	export let data;
+	const user = docStore(firestore, `users/${data.user.id}`);
 </script>
 
 <body>
@@ -16,7 +18,7 @@
 			{:else}
 				<div class="balance">
 					<img src="images/balance.png" alt="balance" />
-					<p>{data.user.balance}</p>
+					<p>{$user?.balance}</p>
 				</div>
 
 				<button formaction="?/myProfile">
