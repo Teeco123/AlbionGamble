@@ -6,11 +6,14 @@
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
+	export let data;
 
 	//Querying gambles to display
 	const gambleRef = collection(firestore, 'gambles');
-	const q = query(gambleRef, orderBy('date', 'asc'), limit(1)); /// CHANGE TO DESC
+	const q = query(gambleRef, orderBy('date', 'desc'), limit(1));
 	const gambles = collectionStore(firestore, q);
+
+	console.log(data.gamble.totalSilver);
 
 	let wheel: any;
 	let wheelCanvas: any;

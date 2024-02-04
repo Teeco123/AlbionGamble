@@ -36,7 +36,7 @@
 			{/if}
 		</form>
 	</header>
-	<WheelOfFortune {form} />
+	<WheelOfFortune {form} {data} />
 </body>
 
 <style lang="scss">

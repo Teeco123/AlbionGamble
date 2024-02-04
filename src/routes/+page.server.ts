@@ -65,7 +65,7 @@ export const actions = {
 			let gambleData: any;
 
 			const gambleRef = collection(firestore, 'gambles');
-			const gambleQuery = query(gambleRef, orderBy('date', 'asc'), limit(1));
+			const gambleQuery = query(gambleRef, orderBy('date', 'desc'), limit(1));
 			const gambleSnapshot = await getDocs(gambleQuery);
 			gambleSnapshot.forEach((gambleDoc) => {
 				gambleData = gambleDoc.data();
@@ -122,7 +122,17 @@ export const actions = {
 	}
 };
 export const load = async ({ locals }) => {
+	let _gambleData;
+	const gambleRef = collection(firestore, 'gambles');
+	const gambleQuery = query(gambleRef, orderBy('date', 'desc'), limit(1));
+	const gambleSnapshot = await getDocs(gambleQuery);
+	gambleSnapshot.forEach((gambleDoc) => {
+		_gambleData = gambleDoc.data();
+	});
+
+	let gambleData = JSON.parse(JSON.stringify(_gambleData));
 	return {
-		user: locals.user
+		user: locals.user,
+		gamble: gambleData
 	};
 };
