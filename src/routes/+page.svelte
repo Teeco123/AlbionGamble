@@ -2,6 +2,7 @@
 	import WheelOfFortune from './WheelOfFortune.svelte';
 	import { docStore } from 'sveltefire';
 	import { firestore } from '$lib/firebase';
+	import { enhance } from '$app/forms';
 	export let data;
 
 	import type { ActionData } from './$types';
@@ -14,7 +15,7 @@
 <body>
 	<header>
 		<img class="logo" src="" alt="LOGO" />
-		<form action="?" method="post" class="user">
+		<form action="?" method="post" class="user" use:enhance>
 			{#if !data.user}
 				<button formaction="?/loginRedirect">
 					<img src="images/login.png" alt="login" />

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { ActionData } from './$types';
-
+	import { enhance } from '$app/forms';
 	export let form: ActionData;
 </script>
 
 <body>
 	<div class="container">
-		<form action="?/login" method="post">
+		<form action="?/login" method="post" use:enhance>
 			<div class="inputs">
 				<p>E-Mail:</p>
 				<input name="login" type="text" minlength="3" maxlength="50" /><br />

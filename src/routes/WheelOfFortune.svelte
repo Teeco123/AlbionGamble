@@ -4,6 +4,7 @@
 	import { firestore } from '$lib/firebase';
 	import { collection, where, query, orderBy, limit } from 'firebase/firestore';
 	import type { ActionData } from './$types';
+	import { enhance } from '$app/forms';
 
 	export let form: ActionData;
 	export let data;
@@ -18,17 +19,16 @@
 	let center: any;
 
 	let x = 0;
-	let totalPlayers = data.gamble.totalPlayers; 
-	let player = new Array; 
-	let totalSilver = data.gamble.totalSilver; 
+	let totalPlayers = data.gamble.totalPlayers;
+	let player = new Array();
+	let totalSilver = data.gamble.totalSilver;
 	const kolory = ['red', 'blue', 'green'];
 
 	//input player silver flom data base to script
-	for(x = 0; x < totalPlayers; x++)
-	{
+	for (x = 0; x < totalPlayers; x++) {
 		player.push(data.gamble.players[x].balanceDrop);
 	}
-	
+
 	//calc precent of player silver to total silver w skrócie procent szans :)
 	for (x = 0; x < totalPlayers; x++) {
 		player[x] = player[x] / totalSilver;
@@ -47,7 +47,7 @@
 	};
 
 	const drawSlice = (sliceCtx: any) => {
-	let ileKulkaPelne = 0; //zmienna do kawałów
+		let ileKulkaPelne = 0; //zmienna do kawałów
 		for (x = 0; x < totalPlayers; x++) {
 			sliceCtx.beginPath();
 			sliceCtx.arc(400, 400, 300, ileKulkaPelne, (ileKulkaPelne += player[x] * Math.PI * 2)); //nadanie lie kula pelne wartości zalełnionego koła
@@ -57,13 +57,12 @@
 			sliceCtx.stroke();
 		}
 	};
-	
-	const drawCenter = (centerCtx: any) =>
-	{
+
+	const drawCenter = (centerCtx: any) => {
 		centerCtx.beginPath();
 		centerCtx.arc(400, 400, 50, 0, Math.PI * 2);
 		centerCtx.fill();
-	}
+	};
 
 	function SpinWheel() {
 		let min = 10;
@@ -104,7 +103,7 @@
 	{/each}
 {/each}
 
-<form action="?/dropSilver" method="post">
+<form action="?/dropSilver" method="post" use:enhance>
 	<input name="silver" type="number" />
 	{#if form?.notEnoughSilver}
 		<p>Not Enough Silver</p>
