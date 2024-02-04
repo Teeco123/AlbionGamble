@@ -23,7 +23,6 @@ export const actions = {
 	},
 	logout: async ({ cookies }) => {
 		cookies.delete('session', { path: '/' });
-		console.log(cookies.get('session'));
 
 		throw redirect(303, '/');
 	},
@@ -83,7 +82,6 @@ export const actions = {
 			const idSnapshot = await getDocs(idQuery);
 			idSnapshot.forEach((idDoc) => {
 				uid = idDoc.id;
-				console.log(uid);
 			});
 
 			//Adding new user to the gamble poll & increasing totalPlayers + totalSilver
@@ -114,7 +112,6 @@ export const actions = {
 
 			return { success: true };
 		} else if (silver <= 0) {
-			console.log(silver);
 			return { cantGoFor0: true };
 		} else if (newBalance < 0) {
 			return { notEnoughSilver: true };

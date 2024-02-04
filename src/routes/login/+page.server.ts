@@ -54,8 +54,6 @@ export const actions = {
 			userData = userDoc.data();
 		});
 
-		console.log(userData);
-
 		if (!userData && password && login) {
 			addDoc(collection(firestore, 'users'), {
 				login: login,
