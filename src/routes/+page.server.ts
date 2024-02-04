@@ -41,11 +41,10 @@ export const actions = {
 		const data = await request.formData();
 		const silver = data.get('silver');
 		const session = cookies.get('session');
-
-		//Finding user in databse
 		let userData;
 		let userId: any;
 
+		//Finding user in databse
 		let userQuery = query(collection(firestore, 'users'), where(documentId(), '==', session));
 		const userSnapshot = await getDocs(userQuery);
 		userSnapshot.forEach((userDoc) => {
@@ -61,14 +60,17 @@ export const actions = {
 		if (newBalance >= 0) {
 			//Querying latest gamble document id
 			let gambleId: any;
+			let gambleData: any;
+
 			const gambleRef = collection(firestore, 'gambles');
 			const gambleQuery = query(gambleRef, orderBy('date', 'asc'), limit(1));
 			const gambleSnapshot = await getDocs(gambleQuery);
 			gambleSnapshot.forEach((gambleDoc) => {
+				gambleData = gambleDoc.data();
 				gambleId = gambleDoc.id;
 			});
 
-			//Adding new user to the gamble poll
+			//Adding new user to the gamble poll & increasing totalPlayers + totalSilver
 			await updateDoc(doc(firestore, 'gambles', gambleId), {
 				players: arrayUnion({
 					balanceDrop: silver,
@@ -76,11 +78,11 @@ export const actions = {
 					//@ts-ignore{
 					login: userData.login
 				}),
-				totalPlayers: increment(1)
+				totalPlayers: increment(1),
+				totalSilver: Number(gambleData?.totalSilver) + Number(silver)
 			});
 
 			//Updating users balance
-
 			await setDoc(
 				doc(firestore, 'users', userId),
 				{
@@ -88,6 +90,7 @@ export const actions = {
 				},
 				{ merge: true }
 			);
+
 			return { success: true };
 		} else if (newBalance < 0) {
 			return { notEnoughSilver: true };
