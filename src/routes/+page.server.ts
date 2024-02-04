@@ -9,9 +9,11 @@ import {
 	limit,
 	setDoc,
 	doc,
-	updateDoc,
 	arrayUnion,
-	increment
+	increment,
+	addDoc,
+	serverTimestamp,
+	getDoc
 } from 'firebase/firestore';
 import { firestore } from '$lib/firebase';
 
@@ -70,17 +72,36 @@ export const actions = {
 				gambleId = gambleDoc.id;
 			});
 
-			//Adding new user to the gamble poll & increasing totalPlayers + totalSilver
-			await updateDoc(doc(firestore, 'gambles', gambleId), {
-				players: arrayUnion({
-					balanceDrop: silver,
-					id: userId,
-					//@ts-ignore{
-					login: userData.login
-				}),
-				totalPlayers: increment(1),
-				totalSilver: Number(gambleData?.totalSilver) + Number(silver)
+			//Generating unique id for every balance drop
+			const serverTime = serverTimestamp();
+			let uid: any;
+
+			await addDoc(collection(firestore, 'tmp'), { date: serverTime });
+
+			const idRef = collection(firestore, 'tmp');
+			const idQuery = query(idRef, orderBy('date', 'desc'), limit(1));
+			const idSnapshot = await getDocs(idQuery);
+			idSnapshot.forEach((idDoc) => {
+				uid = idDoc.id;
+				console.log(uid);
 			});
+
+			//Adding new user to the gamble poll & increasing totalPlayers + totalSilver
+			await setDoc(
+				doc(firestore, 'gambles', gambleId),
+				{
+					players: arrayUnion({
+						id: uid,
+						balanceDrop: silver,
+						playerId: userId,
+						//@ts-ignore
+						login: userData.login
+					}),
+					totalPlayers: increment(1),
+					totalSilver: Number(gambleData?.totalSilver) + Number(silver)
+				},
+				{ merge: true }
+			);
 
 			//Updating users balance
 			await setDoc(
