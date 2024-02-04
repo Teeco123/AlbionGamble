@@ -1,5 +1,5 @@
 import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { firestore } from 'lib/firebase';
+import { firestore } from '$lib/firebase';
 import { redirect } from '@sveltejs/kit';
 
 export const actions = {
