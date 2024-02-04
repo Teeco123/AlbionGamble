@@ -13,23 +13,25 @@
 	const q = query(gambleRef, orderBy('date', 'desc'), limit(1));
 	const gambles = collectionStore(firestore, q);
 
-	console.log(data.gamble.totalSilver);
-
-	let wheel: any;
 	let wheelCanvas: any;
 	let slice: any;
+	let center: any;
 
 	let x = 0;
-	let numberOfSlices = 5;
-	let player = [70, 40, 35, 15, 20];
-	let totalSilver = 0;
-	for (x = 0; x < numberOfSlices; x++) {
-		totalSilver += player[x];
-	}
-	const kolory = ['red', 'blue', 'green']; //kolory kawałów
+	let totalPlayers = data.gamble.totalPlayers; 
+	let player = new Array; 
+	let totalSilver = data.gamble.totalSilver; 
+	const kolory = ['red', 'blue', 'green'];
 
-	for (x = 0; x < numberOfSlices; x++) {
-		player[x] = player[x] / totalSilver; //procent szans :)
+	//input player silver flom data base to script
+	for(x = 0; x < totalPlayers; x++)
+	{
+		player.push(data.gamble.players[x].balanceDrop);
+	}
+	
+	//calc precent of player silver to total silver w skrócie procent szans :)
+	for (x = 0; x < totalPlayers; x++) {
+		player[x] = player[x] / totalSilver;
 	}
 
 	const canvas = {
@@ -44,10 +46,9 @@
 		ctx.moveTo(400, 400);
 	};
 
-	x = 0; //zmienna do kawałów
-	let ileKulkaPelne = 0; //zmienna do kawałów
 	const drawSlice = (sliceCtx: any) => {
-		for (x; x < numberOfSlices; x++) {
+	let ileKulkaPelne = 0; //zmienna do kawałów
+		for (x = 0; x < totalPlayers; x++) {
 			sliceCtx.beginPath();
 			sliceCtx.arc(400, 400, 300, ileKulkaPelne, (ileKulkaPelne += player[x] * Math.PI * 2)); //nadanie lie kula pelne wartości zalełnionego koła
 			sliceCtx.lineTo(400, 400);
@@ -56,6 +57,13 @@
 			sliceCtx.stroke();
 		}
 	};
+	
+	const drawCenter = (centerCtx: any) =>
+	{
+		centerCtx.beginPath();
+		centerCtx.arc(400, 400, 50, 0, Math.PI * 2);
+		centerCtx.fill();
+	}
 
 	function SpinWheel() {
 		let min = 10;
@@ -72,17 +80,19 @@
 	}
 
 	onMount(() => {
-		console.log('Onmount');
 		const ctx = wheelCanvas.getContext('2d');
 		const sliceCtx = slice.getContext('2d');
+		const centerCtx = center.getContext('2d');
 		drawWheel(ctx);
 		drawSlice(sliceCtx);
+		drawCenter(centerCtx);
 	});
 </script>
 
-<div class="WheelOfFortune" bind:this={wheel}>
+<div class="WheelOfFortune">
 	<canvas id="wheelCanvas" bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
 	<canvas id="slice" bind:this={slice} width={canvas.width} height={canvas.height} />
+	<canvas id="center" bind:this={center} width={canvas.width} height={canvas.height} />
 </div>
 <button on:click={SpinWheel}>SPIN</button>
 {#each $gambles as gamble}
