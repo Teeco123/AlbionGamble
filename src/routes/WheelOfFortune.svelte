@@ -95,6 +95,8 @@
 	<input name="silver" type="number" />
 	{#if form?.notEnoughSilver}
 		<p>Not Enough Silver</p>
+	{:else if form?.cantGoFor0}
+		<p>Can't go in for 0 silver</p>
 	{/if}
 	<button>Go In</button>
 </form>

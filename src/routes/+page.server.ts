@@ -41,7 +41,7 @@ export const actions = {
 	},
 	dropSilver: async ({ request, cookies }) => {
 		const data = await request.formData();
-		const silver = data.get('silver');
+		const silver = Number(data.get('silver'));
 		const session = cookies.get('session');
 		let userData;
 		let userId: any;
@@ -59,7 +59,7 @@ export const actions = {
 		//@ts-ignore
 		let newBalance = userBalance - silver;
 
-		if (newBalance >= 0) {
+		if (newBalance >= 0 && silver > 0) {
 			//Querying latest gamble document id
 			let gambleId: any;
 			let gambleData: any;
@@ -113,6 +113,9 @@ export const actions = {
 			);
 
 			return { success: true };
+		} else if (silver <= 0) {
+			console.log(silver);
+			return { cantGoFor0: true };
 		} else if (newBalance < 0) {
 			return { notEnoughSilver: true };
 		}
