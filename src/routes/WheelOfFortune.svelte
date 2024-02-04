@@ -84,6 +84,8 @@
 <button on:click={SpinWheel}>SPIN</button>
 {#each $gambles as gamble}
 	<p>Total Silver:{gamble.totalSilver}</p>
+	<p>Total Players:{gamble.totalPlayers}</p>
+
 	{#each gamble.players as player}
 		<p>Player:{player.login} Silver:{player.balanceDrop}</p>
 	{/each}

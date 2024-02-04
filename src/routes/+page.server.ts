@@ -1,5 +1,18 @@
 import { redirect } from '@sveltejs/kit';
-import { query, where, collection, documentId, getDocs } from 'firebase/firestore';
+import {
+	query,
+	where,
+	collection,
+	documentId,
+	getDocs,
+	orderBy,
+	limit,
+	setDoc,
+	doc,
+	updateDoc,
+	arrayUnion,
+	increment
+} from 'firebase/firestore';
 import { firestore } from '$lib/firebase';
 
 export const actions = {
@@ -31,10 +44,13 @@ export const actions = {
 
 		//Finding user in databse
 		let userData;
+		let userId: any;
+
 		let userQuery = query(collection(firestore, 'users'), where(documentId(), '==', session));
 		const userSnapshot = await getDocs(userQuery);
 		userSnapshot.forEach((userDoc) => {
 			userData = userDoc.data();
+			userId = userDoc.id;
 		});
 
 		//@ts-ignore
@@ -43,6 +59,35 @@ export const actions = {
 		let newBalance = userBalance - silver;
 
 		if (newBalance >= 0) {
+			//Querying latest gamble document id
+			let gambleId: any;
+			const gambleRef = collection(firestore, 'gambles');
+			const gambleQuery = query(gambleRef, orderBy('date', 'asc'), limit(1));
+			const gambleSnapshot = await getDocs(gambleQuery);
+			gambleSnapshot.forEach((gambleDoc) => {
+				gambleId = gambleDoc.id;
+			});
+
+			//Adding new user to the gamble poll
+			await updateDoc(doc(firestore, 'gambles', gambleId), {
+				players: arrayUnion({
+					balanceDrop: silver,
+					id: userId,
+					//@ts-ignore{
+					login: userData.login
+				}),
+				totalPlayers: increment(1)
+			});
+
+			//Updating users balance
+
+			await setDoc(
+				doc(firestore, 'users', userId),
+				{
+					balance: newBalance
+				},
+				{ merge: true }
+			);
 			return { success: true };
 		} else if (newBalance < 0) {
 			return { notEnoughSilver: true };
