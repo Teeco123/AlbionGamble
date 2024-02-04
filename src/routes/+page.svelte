@@ -4,6 +4,10 @@
 	import { firestore } from '$lib/firebase';
 	export let data;
 
+	import type { ActionData } from './$types';
+
+	export let form: ActionData;
+
 	$: user = data.user !== undefined ? docStore(firestore, `users/${data.user.id}`) : undefined;
 </script>
 
@@ -32,7 +36,7 @@
 			{/if}
 		</form>
 	</header>
-	<WheelOfFortune />
+	<WheelOfFortune {form} />
 </body>
 
 <style lang="scss">

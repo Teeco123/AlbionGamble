@@ -1,5 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { collectionStore } from 'sveltefire';
+	import { firestore } from '$lib/firebase';
+	import { collection, where, query, orderBy, limit } from 'firebase/firestore';
+	import type { ActionData } from './$types';
+
+	export let form: ActionData;
+
+	//Querying gambles to display
+	const gambleRef = collection(firestore, 'gambles');
+	const q = query(gambleRef, orderBy('date', 'asc'), limit(1)); /// CHANGE TO DESC
+	const gambles = collectionStore(firestore, q);
 
 	let wheel: any;
 	let wheelCanvas: any;
@@ -70,7 +81,21 @@
 	<canvas id="wheelCanvas" bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
 	<canvas id="slice" bind:this={slice} width={canvas.width} height={canvas.height} />
 </div>
-<button on:click={SpinWheel}></button>
+<button on:click={SpinWheel}>SPIN</button>
+{#each $gambles as gamble}
+	<p>Total Silver:{gamble.totalSilver}</p>
+	{#each gamble.players as player}
+		<p>Player:{player.login} Silver:{player.balanceDrop}</p>
+	{/each}
+{/each}
+
+<form action="?/dropSilver" method="post">
+	<input name="silver" type="number" />
+	{#if form?.notEnoughSilver}
+		<p>Not Enough Silver</p>
+	{/if}
+	<button>Go In</button>
+</form>
 
 <style lang="scss">
 	.WheelOfFortune {
@@ -82,7 +107,6 @@
 			position: absolute;
 			left: 50%;
 			top: 50%;
-
 			transform: translate(-50%, 0%);
 		}
 	}

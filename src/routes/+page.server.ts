@@ -23,6 +23,30 @@ export const actions = {
 		});
 		//@ts-ignore
 		throw redirect(303, `/profile/${userData?.login}`);
+	},
+	dropSilver: async ({ request, cookies }) => {
+		const data = await request.formData();
+		const silver = data.get('silver');
+		const session = cookies.get('session');
+
+		//Finding user in databse
+		let userData;
+		let userQuery = query(collection(firestore, 'users'), where(documentId(), '==', session));
+		const userSnapshot = await getDocs(userQuery);
+		userSnapshot.forEach((userDoc) => {
+			userData = userDoc.data();
+		});
+
+		//@ts-ignore
+		let userBalance = userData?.balance;
+		//@ts-ignore
+		let newBalance = userBalance - silver;
+
+		if (newBalance >= 0) {
+			return { success: true };
+		} else if (newBalance < 0) {
+			return { notEnoughSilver: true };
+		}
 	}
 };
 export const load = async ({ locals }) => {
