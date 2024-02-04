@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
-import { ObjectId } from 'mongodb';
-import { client, db } from '$lib/server/db.js';
+import { query, where, collection, documentId, getDocs } from 'firebase/firestore';
+import { firestore } from '$lib/firebase';
 
 export const actions = {
 	loginRedirect: async () => {
@@ -14,11 +14,15 @@ export const actions = {
 	},
 	myProfile: async ({ cookies }) => {
 		const session = cookies.get('session');
-		var o_id = new ObjectId(session);
 
-		const user = await db.collection('Users').findOne({ _id: o_id });
-		console.log(user);
-		throw redirect(303, `/profile/${user?.login}`);
+		let userData;
+		let userQuery = query(collection(firestore, 'users'), where(documentId(), '==', session));
+		const userSnapshot = await getDocs(userQuery);
+		userSnapshot.forEach((userDoc) => {
+			userData = userDoc.data();
+		});
+		//@ts-ignore
+		throw redirect(303, `/profile/${userData?.login}`);
 	}
 };
 export const load = async ({ locals }) => {
@@ -26,17 +30,3 @@ export const load = async ({ locals }) => {
 		user: locals.user
 	};
 };
-
-async function WatchDb() {
-	try {
-		const changeStream = db.collection('Users').watch();
-
-		for await (const change of changeStream) {
-			console.log(change);
-		}
-		await changeStream.close();
-	} finally {
-		await client.close();
-	}
-}
-WatchDb().catch(console.dir);
