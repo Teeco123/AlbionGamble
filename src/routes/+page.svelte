@@ -3,7 +3,8 @@
 	import { docStore } from 'sveltefire';
 	import { firestore } from '$lib/firebase';
 	export let data;
-	const user = docStore(firestore, `users/${data.user.id}`);
+
+	$: user = data.user !== undefined ? docStore(firestore, `users/${data.user.id}`) : undefined;
 </script>
 
 <body>
@@ -18,6 +19,7 @@
 			{:else}
 				<div class="balance">
 					<img src="images/balance.png" alt="balance" />
+
 					<p>{$user?.balance}</p>
 				</div>
 
