@@ -29,6 +29,7 @@
 	"type": "module",
 	"dependencies": {
 		"firebase": "^9.23.0",
+		"pusher": "^5.2.0",
 		"pusher-js": "^8.4.0-rc2",
 		"sveltefire": "^0.4.5"
 	}
