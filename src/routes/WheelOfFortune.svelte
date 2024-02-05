@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { collectionStore } from 'sveltefire';
 	import { firestore } from '$lib/firebase';
+	import pusher from '$lib/pusher';
 	import { collection, where, query, orderBy, limit } from 'firebase/firestore';
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
@@ -77,6 +78,12 @@
 			slice.style.transform = `translate(-50%, 0%) rotate(${actualDeg}deg)`;
 		}, 10000);
 	}
+	//Subscribe to pusher channel
+	const channel = pusher.subscribe('channel');
+
+	channel.bind('event', (data: any) => {
+		SpinWheel();
+	});
 
 	onMount(() => {
 		const ctx = wheelCanvas.getContext('2d');
