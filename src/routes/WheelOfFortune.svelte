@@ -82,16 +82,32 @@
 	const channel = pusher.subscribe('channel');
 
 	channel.bind('event', (data: any) => {
+		function SpinWheel() {
+			let min = 10;
+			let max = 30;
+			let degree = Math.floor(Math.random() * (max - min) * 1000);
+			slice.style.transition = 'all 10s ease-out';
+			slice.style.transform = `translate(-50%, 0%) rotate(${degree}deg)`;
+
+			setTimeout(() => {
+				slice.style.transition = 'none';
+				let actualDeg = degree % 360;
+				slice.style.transform = `translate(-50%, 0%) rotate(${actualDeg}deg)`;
+			}, 10000);
+		}
 		SpinWheel();
 	});
 
-	onMount(() => {
+	function draw() {
 		const ctx = wheelCanvas.getContext('2d');
 		const sliceCtx = slice.getContext('2d');
 		const centerCtx = center.getContext('2d');
 		drawWheel(ctx);
 		drawSlice(sliceCtx);
 		drawCenter(centerCtx);
+	}
+	onMount(() => {
+		draw();
 	});
 </script>
 
