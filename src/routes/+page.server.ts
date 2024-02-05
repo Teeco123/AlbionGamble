@@ -13,7 +13,8 @@ import {
 	increment,
 	addDoc,
 	serverTimestamp,
-	getDoc
+	getDoc,
+	onSnapshot
 } from 'firebase/firestore';
 import { firestore } from '$lib/firebase';
 
@@ -122,10 +123,23 @@ export const load = async ({ locals }) => {
 	let _gambleData;
 	const gambleRef = collection(firestore, 'gambles');
 	const gambleQuery = query(gambleRef, orderBy('date', 'desc'), limit(1));
-	const gambleSnapshot = await getDocs(gambleQuery);
-	gambleSnapshot.forEach((gambleDoc) => {
-		_gambleData = gambleDoc.data();
+
+	const gambleFirstDoc = await getDocs(gambleQuery);
+	gambleFirstDoc.forEach((gambleDocFirst) => {
+		_gambleData = gambleDocFirst.data();
 	});
+
+	//Get document every update
+	const unsubscribe = onSnapshot(gambleQuery, (gambleSnapshot) => {
+		gambleSnapshot.forEach((gambleDoc) => {
+			_gambleData = gambleDoc.data();
+		});
+	});
+
+	if (typeof _gambleData !== 'undefined') {
+	} else {
+		console.error('error: gamble data is undefined');
+	}
 
 	let gambleData = JSON.parse(JSON.stringify(_gambleData));
 	return {
