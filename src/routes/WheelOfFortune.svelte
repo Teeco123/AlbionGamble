@@ -16,7 +16,7 @@
 	const gambles = collectionStore(firestore, q);
 
 	let wheelCanvas: any;
-	let slice: any;
+	let slice: HTMLCanvasElement;
 	let center: any;
 
 	let x = 0;
@@ -78,12 +78,6 @@
 			slice.style.transform = `translate(-50%, 0%) rotate(${actualDeg}deg)`;
 		}, 10000);
 	}
-	//Subscribe to pusher channel
-	const channel = pusher.subscribe('channel');
-
-	channel.bind('event', (data: any) => {
-		SpinWheel();
-	});
 
 	onMount(() => {
 		const ctx = wheelCanvas.getContext('2d');
@@ -92,6 +86,11 @@
 		drawWheel(ctx);
 		drawSlice(sliceCtx);
 		drawCenter(centerCtx);
+
+		const channel = pusher.subscribe('channel');
+		channel.bind('spin', (data: any) => {
+			SpinWheel();
+		});
 	});
 </script>
 
