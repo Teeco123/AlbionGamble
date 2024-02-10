@@ -3,13 +3,20 @@
 	import { docStore } from 'sveltefire';
 	import { firestore } from '$lib/firebase';
 	import { enhance } from '$app/forms';
-	export let data;
-
+	import pusher from '$lib/pusher';
 	import type { ActionData } from './$types';
+	import { onMount } from 'svelte';
 
+	export let data;
 	export let form: ActionData;
 
+	let update = 0;
+
 	$: user = data.user !== undefined ? docStore(firestore, `users/${data.user.id}`) : undefined;
+	const channel = pusher.subscribe('channel');
+	channel.bind('update', (data: any) => {
+		update++;
+	});
 </script>
 
 <body>
@@ -37,7 +44,10 @@
 			{/if}
 		</form>
 	</header>
-	<WheelOfFortune {form} {data} />
+
+	{#key update}
+		<WheelOfFortune {form} {data} />
+	{/key}
 </body>
 
 <style lang="scss">

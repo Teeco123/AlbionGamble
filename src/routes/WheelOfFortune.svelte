@@ -8,7 +8,7 @@
 	import { enhance } from '$app/forms';
 
 	export let form: ActionData;
-	export let data;
+	export let data: any;
 
 	//Querying gambles to display
 	const gambleRef = collection(firestore, 'gambles');
@@ -24,16 +24,6 @@
 	let player = new Array();
 	let totalSilver = data.gamble.totalSilver;
 	const kolory = ['red', 'blue', 'green'];
-
-	//input player silver flom data base to script
-	for (x = 0; x < totalPlayers; x++) {
-		player.push(data.gamble.players[x].balanceDrop);
-	}
-
-	//calc precent of player silver to total silver w skrócie procent szans :)
-	for (x = 0; x < totalPlayers; x++) {
-		player[x] = player[x] / totalSilver;
-	}
 
 	const canvas = {
 		width: 800,
@@ -80,6 +70,16 @@
 	}
 
 	onMount(() => {
+		//input player silver flom data base to script
+		for (x = 0; x < totalPlayers; x++) {
+			player.push(data.gamble.players[x].balanceDrop);
+		}
+
+		//calc precent of player silver to total silver w skrócie procent szans :)
+		for (x = 0; x < totalPlayers; x++) {
+			player[x] = player[x] / totalSilver;
+		}
+
 		const ctx = wheelCanvas.getContext('2d');
 		const sliceCtx = slice.getContext('2d');
 		const centerCtx = center.getContext('2d');
@@ -94,11 +94,14 @@
 	});
 </script>
 
-<div class="WheelOfFortune">
-	<canvas id="wheelCanvas" bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
-	<canvas id="slice" bind:this={slice} width={canvas.width} height={canvas.height} />
-	<canvas id="center" bind:this={center} width={canvas.width} height={canvas.height} />
-</div>
+{#key totalPlayers}
+	<div class="WheelOfFortune">
+		<canvas id="wheelCanvas" bind:this={wheelCanvas} width={canvas.width} height={canvas.height} />
+		<canvas id="slice" bind:this={slice} width={canvas.width} height={canvas.height} />
+		<canvas id="center" bind:this={center} width={canvas.width} height={canvas.height} />
+	</div>
+{/key}
+
 <button on:click={SpinWheel}>SPIN</button>
 {#each $gambles as gamble}
 	<p>Total Silver:{gamble.totalSilver}</p>
