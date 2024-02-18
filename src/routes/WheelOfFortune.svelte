@@ -3,7 +3,7 @@
 	import { collectionStore } from 'sveltefire';
 	import { firestore } from '$lib/firebase';
 	import pusher from '$lib/pusher';
-	import { collection, where, query, orderBy, limit } from 'firebase/firestore';
+	import { collection, query, orderBy, limit } from 'firebase/firestore';
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
 
@@ -15,9 +15,14 @@
 	const q = query(gambleRef, orderBy('date', 'desc'), limit(1));
 	const gambles = collectionStore(firestore, q);
 
-	let wheelCanvas: any;
+	//Declaring canvas elements & their reactive equivalents
+	let wheelCanvas: HTMLCanvasElement;
 	let slice: HTMLCanvasElement;
-	let center: any;
+	let center: HTMLCanvasElement;
+
+	$: newWheel = wheelCanvas;
+	$: newSlice = slice;
+	$: newCenter = center;
 
 	let x = 0;
 	let totalPlayers = data.gamble.totalPlayers;
@@ -59,13 +64,13 @@
 		let min = 10;
 		let max = 30;
 		let degree = Math.floor(Math.random() * (max - min) * 1000);
-		slice.style.transition = 'all 10s ease-out';
-		slice.style.transform = `translate(-50%, 0%) rotate(${degree}deg)`;
+		newSlice.style.transition = 'all 10s ease-out';
+		newSlice.style.transform = `translate(-50%, 0%) rotate(${degree}deg)`;
 
 		setTimeout(() => {
-			slice.style.transition = 'none';
+			newSlice.style.transition = 'none';
 			let actualDeg = degree % 360;
-			slice.style.transform = `translate(-50%, 0%) rotate(${actualDeg}deg)`;
+			newSlice.style.transform = `translate(-50%, 0%) rotate(${actualDeg}deg)`;
 		}, 10000);
 	}
 
