@@ -5,7 +5,6 @@
 	import { enhance } from '$app/forms';
 	import pusher from '$lib/pusher';
 	import type { ActionData } from './$types';
-	import { onMount } from 'svelte';
 
 	export let data;
 	export let form: ActionData;

@@ -136,12 +136,8 @@ export const load = async ({ locals }) => {
 		});
 	});
 
-	if (typeof _gambleData !== 'undefined') {
-	} else {
-		console.error('error: gamble data is undefined');
-	}
-
 	let gambleData = JSON.parse(JSON.stringify(_gambleData));
+
 	return {
 		user: locals.user,
 		gamble: gambleData
